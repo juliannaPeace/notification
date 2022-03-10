@@ -28,6 +28,14 @@ public class NotificationService {
                                 "obter cada vez mais promoções"));
             }
         }
+
+        if(TypeUser.INTERMEDIARY.equals(typeUser)){
+            if(localDateTimeFactory.now().equals(LocalDate.now().atTime(18,0))) {
+                return Optional.of(new Configuration(7, 18, 0,
+                        "Você está no caminho certo, continue acessando nosso APP para obter cada vez mais " +
+                                "promoções"));
+            }
+        }
         return Optional.empty();
     }
 }

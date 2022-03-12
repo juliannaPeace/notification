@@ -1,37 +1,40 @@
 package com.notification.notification;
 
-import org.assertj.core.api.Assertions;
+import com.notification.notification.domain.entity.Hour;
+import com.notification.notification.domain.entity.TypeUser;
+import com.notification.notification.domain.service.NotificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 
-@ExtendWith(MockitoExtension.class)
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
 class NotificationApplicationTests {
 
-	@InjectMocks private NotificationService notificationService;
-	@Mock private LocalDateTimeFactory localDateTimeFactory;
+	@Autowired private NotificationService notificationService;
+	@MockBean private LocalDateTimeFactory localDateTimeFactory;
 
 	@Test
 	@DisplayName("When user is noob and hour is 12hs, Then send specific notification")
 	void whenUserIsTypeNoobAndTwelveHoursThenSendSpecificNotification() {
 
 		var typeUser = TypeUser.NOOB;
-		Mockito.when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(12,0));
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(12,0));
 
-		var response = notificationService.send(typeUser);
+		var response = notificationService.send();
 
-		Assertions.assertThat(response.isPresent()).isTrue();
-		Assertions.assertThat(response.get().getHours()).contains(new Hour(12,0));
-		Assertions.assertThat(response.get().getNumberDaysOfWeek()).isEqualTo(7);
-		Assertions.assertThat(response.get().getMessage()).isEqualTo("Você precisa usar mais nosso APP para " +
+		assertThat(response.isEmpty()).isFalse();
+		assertThat(response.get(0).getHours()).contains(new Hour(12,0));
+		assertThat(response.get(0).getNumberDaysOfWeek()).isEqualTo(7);
+		assertThat(response.get(0).getMessage()).isEqualTo("Você precisa usar mais nosso APP para " +
 				"obter cada vez mais promoções");
 	}
 
@@ -39,15 +42,15 @@ class NotificationApplicationTests {
 	@DisplayName("When user is noob and hour is 18hs, Then send specific notification")
 	void whenUserIsTypeNoobAndEighteenHoursThenSendSpecificNotification() {
 
-		var typeUser = TypeUser.NOOB;
-		Mockito.when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(18,0));
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(18,0));
 
-		var response = notificationService.send(typeUser);
+		var response = notificationService.send()
+				.stream().filter(r -> r.isTypeUser(TypeUser.NOOB)).toList();
 
-		Assertions.assertThat(response.isPresent()).isTrue();
-		Assertions.assertThat(response.get().getHours()).contains(new Hour(18,0));
-		Assertions.assertThat(response.get().getNumberDaysOfWeek()).isEqualTo(7);
-		Assertions.assertThat(response.get().getMessage()).isEqualTo("Você precisa usar mais nosso APP para " +
+		assertThat(response.isEmpty()).isFalse();
+		assertThat(response.get(0).getHours()).contains(new Hour(18,0));
+		assertThat(response.get(0).getNumberDaysOfWeek()).isEqualTo(7);
+		assertThat(response.get(0).getMessage()).isEqualTo("Você precisa usar mais nosso APP para " +
 				"obter cada vez mais promoções");
 	}
 
@@ -57,11 +60,11 @@ class NotificationApplicationTests {
 	void whenUserIsTypeNoobAndMinuteIsWrongThenDoesNotSendNotification(int minute) {
 
 		var typeUser = TypeUser.NOOB;
-		Mockito.when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(12,minute));
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(12,minute));
 
-		var response = notificationService.send(typeUser);
+		var response = notificationService.send();
 
-		Assertions.assertThat(response.isPresent()).isFalse();
+		assertThat(response.isEmpty()).isTrue();
 	}
 
 	@ParameterizedTest
@@ -70,11 +73,11 @@ class NotificationApplicationTests {
 	void whenUserIsTypeNoobAndTimeIsWrongThenDoesNotSendNotification(int hour) {
 
 		var typeUser = TypeUser.NOOB;
-		Mockito.when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(hour,0));
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(hour,0));
 
-		var response = notificationService.send(typeUser);
+		var response = notificationService.send();
 
-		Assertions.assertThat(response.isPresent()).isFalse();
+		assertThat(response.isEmpty()).isTrue();
 	}
 
 	@Test
@@ -82,41 +85,57 @@ class NotificationApplicationTests {
 	void whenUserIsTypeIntermediaryAndEighteenHoursThenSendSpecificNotification() {
 
 		var typeUser = TypeUser.INTERMEDIARY;
-		Mockito.when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(18,0));
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(18,0));
 
-		var response = notificationService.send(typeUser);
+		var response = notificationService.send();
 
-		Assertions.assertThat(response.isPresent()).isTrue();
-		Assertions.assertThat(response.get().getHours()).contains(new Hour(18,0));
-		Assertions.assertThat(response.get().getNumberDaysOfWeek()).isEqualTo(7);
-		Assertions.assertThat(response.get().getMessage()).isEqualTo("Você está no caminho certo, continue acessando " +
+		assertThat(response.isEmpty()).isFalse();
+		assertThat(response.get(0).getHours()).contains(new Hour(18,0));
+		assertThat(response.get(0).getNumberDaysOfWeek()).isEqualTo(7);
+		assertThat(response.get(0).getMessage()).isEqualTo("Você está no caminho certo, continue acessando " +
 				"nosso APP para obter cada vez mais promoções");
 	}
 
 	@ParameterizedTest
 	@ValueSource(ints = {1,10,5,15,2,3})
-	@DisplayName("When user is intermediary and hour is 12hs but minute doesn't 0, Then doesn't send specific notification")
+	@DisplayName("When user is intermediary and hour is 18hs but minute doesn't 0, Then doesn't send specific notification")
 	void whenUserIsTypeIntermediaryAndMinuteIsWrongThenDoesNotSendNotification(int minute) {
 
 		var typeUser = TypeUser.INTERMEDIARY;
-		Mockito.when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(12,minute));
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(18,minute));
 
-		var response = notificationService.send(typeUser);
+		var response = notificationService.send();
 
-		Assertions.assertThat(response.isPresent()).isFalse();
+		assertThat(response.isEmpty()).isTrue();
 	}
 
 	@ParameterizedTest
 	@ValueSource(ints = {12,11,19,17,15})
 	@DisplayName("When user is intermediary and hour doesn't 18hs, Then doesn't send specific notification")
 	void whenUserIsTypeIntermediaryAndTimeIsWrongThenDoesNotSendNotification(int hour) {
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(hour,0));
 
-		var typeUser = TypeUser.INTERMEDIARY;
-		Mockito.when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(hour,0));
+		var response = notificationService.send().stream()
+				.filter(r -> r.isTypeUser(TypeUser.INTERMEDIARY)).toList();
 
-		var response = notificationService.send(typeUser);
+		assertThat(response.isEmpty()).isTrue();
+	}
 
-		Assertions.assertThat(response.isPresent()).isFalse();
+	@Test
+	@DisplayName("When user is advanced and hour is 22hs and did not receive 2 notifications in the week, Then send specific notification")
+	void whenUserIsTypeAdvancedAndTwentyTwoHoursThenSendSpecificNotification() {
+		when(localDateTimeFactory.now()).thenReturn(LocalDate.now().atTime(22,0));
+
+		//TODO: Implementar lógica de envio de mensagens 2x por semana
+		//TODO: Para isso preciso persistir esse dado em algum lugar, criando assim uma repositório de dados
+
+		var response = notificationService.send();
+
+		assertThat(response.isEmpty()).isFalse();
+		assertThat(response.get(0).getHours()).contains(new Hour(22,0));
+		assertThat(response.get(0).getNumberDaysOfWeek()).isEqualTo(2);
+		assertThat(response.get(0).getMessage()).isEqualTo("Você é um dos nosso melhores usuários, continue " +
+				"acessando nosso APP para obter cada vez mais promoções");
 	}
 
 }

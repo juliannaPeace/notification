@@ -1,13 +1,16 @@
-package com.notification.notification;
+package com.notification.notification.domain.entity;
+
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoobConfiguration extends Configuration {
+@Component
+public class NoobConfiguration extends NotificationConfiguration {
 
     public NoobConfiguration() {
         super(7, "Você precisa usar mais nosso APP para " +
-                "obter cada vez mais promoções");
+                "obter cada vez mais promoções", TypeUser.NOOB);
     }
 
     @Override

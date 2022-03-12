@@ -1,13 +1,16 @@
-package com.notification.notification;
+package com.notification.notification.domain.entity;
+
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntermediaryConfiguration extends Configuration{
+@Component
+public class IntermediaryConfiguration extends NotificationConfiguration {
 
     public IntermediaryConfiguration() {
         super(7,"Você está no caminho certo, continue acessando nosso " +
-                "APP para obter cada vez mais promoções");
+                "APP para obter cada vez mais promoções", TypeUser.INTERMEDIARY);
     }
 
     @Override

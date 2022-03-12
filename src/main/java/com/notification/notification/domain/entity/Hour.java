@@ -1,4 +1,4 @@
-package com.notification.notification;
+package com.notification.notification.domain.entity;
 
 import java.util.Objects;
 

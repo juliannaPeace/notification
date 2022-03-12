@@ -29,10 +29,9 @@ class NotificationApplicationTests {
 		var response = notificationService.send(typeUser);
 
 		Assertions.assertThat(response.isPresent()).isTrue();
-		Assertions.assertThat(response.get().hour()).isEqualTo(12);
-		Assertions.assertThat(response.get().minute()).isEqualTo(0);
-		Assertions.assertThat(response.get().numberDaysOfWeek()).isEqualTo(7);
-		Assertions.assertThat(response.get().message()).isEqualTo("Você precisa usar mais nosso APP para " +
+		Assertions.assertThat(response.get().getHours()).contains(new Hour(12,0));
+		Assertions.assertThat(response.get().getNumberDaysOfWeek()).isEqualTo(7);
+		Assertions.assertThat(response.get().getMessage()).isEqualTo("Você precisa usar mais nosso APP para " +
 				"obter cada vez mais promoções");
 	}
 
@@ -46,10 +45,9 @@ class NotificationApplicationTests {
 		var response = notificationService.send(typeUser);
 
 		Assertions.assertThat(response.isPresent()).isTrue();
-		Assertions.assertThat(response.get().hour()).isEqualTo(18);
-		Assertions.assertThat(response.get().minute()).isEqualTo(0);
-		Assertions.assertThat(response.get().numberDaysOfWeek()).isEqualTo(7);
-		Assertions.assertThat(response.get().message()).isEqualTo("Você precisa usar mais nosso APP para " +
+		Assertions.assertThat(response.get().getHours()).contains(new Hour(18,0));
+		Assertions.assertThat(response.get().getNumberDaysOfWeek()).isEqualTo(7);
+		Assertions.assertThat(response.get().getMessage()).isEqualTo("Você precisa usar mais nosso APP para " +
 				"obter cada vez mais promoções");
 	}
 
@@ -89,10 +87,9 @@ class NotificationApplicationTests {
 		var response = notificationService.send(typeUser);
 
 		Assertions.assertThat(response.isPresent()).isTrue();
-		Assertions.assertThat(response.get().hour()).isEqualTo(18);
-		Assertions.assertThat(response.get().minute()).isEqualTo(0);
-		Assertions.assertThat(response.get().numberDaysOfWeek()).isEqualTo(7);
-		Assertions.assertThat(response.get().message()).isEqualTo("Você está no caminho certo, continue acessando " +
+		Assertions.assertThat(response.get().getHours()).contains(new Hour(18,0));
+		Assertions.assertThat(response.get().getNumberDaysOfWeek()).isEqualTo(7);
+		Assertions.assertThat(response.get().getMessage()).isEqualTo("Você está no caminho certo, continue acessando " +
 				"nosso APP para obter cada vez mais promoções");
 	}
 

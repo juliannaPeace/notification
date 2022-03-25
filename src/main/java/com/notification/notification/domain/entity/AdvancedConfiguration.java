@@ -2,6 +2,7 @@ package com.notification.notification.domain.entity;
 
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,5 +20,10 @@ public class AdvancedConfiguration extends NotificationConfiguration {
         hours.add(new Hour(22,0));
 
         return hours;
+    }
+
+    @Override
+    public List<DayOfWeek> weeksSend() {
+        return List.of(DayOfWeek.MONDAY, DayOfWeek.FRIDAY);
     }
 }

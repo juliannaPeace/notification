@@ -2,7 +2,9 @@ package com.notification.notification.domain.entity;
 
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -20,5 +22,10 @@ public class NoobConfiguration extends NotificationConfiguration {
         hours.add(new Hour(18,0));
 
         return hours;
+    }
+
+    @Override
+    public List<DayOfWeek> weeksSend() {
+        return Arrays.stream(DayOfWeek.values()).toList();
     }
 }
